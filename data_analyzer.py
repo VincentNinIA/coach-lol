@@ -24,7 +24,7 @@ class DataAnalyzer:
             'kills': [],
             'deaths': [],
             'assists': [],
-            'kill_participation': [],
+            'kill_participation_list': [],  # Temporaire pour calcul
             'champions': defaultdict(lambda: {'games': 0, 'wins': 0, 'kills': 0, 'deaths': 0, 'assists': 0}),
             'roles': defaultdict(int),
             'recent_performance': [],
@@ -56,7 +56,7 @@ class DataAnalyzer:
             team_kills = sum(p['kills'] for p in participants if p['teamId'] == team_id)
             if team_kills > 0:
                 kp = ((player['kills'] + player['assists']) / team_kills) * 100
-                stats['kill_participation'].append(kp)
+                stats['kill_participation_list'].append(kp)
 
             # Stats par champion
             champ_name = player['championName']
@@ -97,10 +97,13 @@ class DataAnalyzer:
             stats['cs_per_min_avg'] /= stats['total_games']
 
             # Kill participation moyenne
-            if stats['kill_participation']:
-                stats['kill_participation'] = statistics.mean(stats['kill_participation'])
+            if stats['kill_participation_list']:
+                stats['kill_participation'] = statistics.mean(stats['kill_participation_list'])
             else:
                 stats['kill_participation'] = 0.0
+
+            # Supprimer la liste temporaire
+            del stats['kill_participation_list']
 
         return stats
 
