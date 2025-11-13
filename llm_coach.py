@@ -301,9 +301,15 @@ Tu es direct, constructif et tu te concentres sur ce qui fait vraiment la diffé
                 ],
                 max_completion_tokens=3000  # GPT-5 utilise max_completion_tokens (temperature=1 par défaut uniquement)
             )
-            content = response.choices[0].message.content
-            if content is None:
-                return "❌ GPT-5 a retourné une réponse vide (content=None)"
+
+            # Diagnostiquer pourquoi la réponse est vide
+            choice = response.choices[0]
+            content = choice.message.content
+            finish_reason = choice.finish_reason
+
+            if content is None or len(content) == 0:
+                return f"❌ GPT-5 a retourné une réponse vide (finish_reason={finish_reason}, content={'None' if content is None else 'empty string'})"
+
             return content
         except Exception as e:
             return f"❌ Erreur OpenAI API : {str(e)}"
