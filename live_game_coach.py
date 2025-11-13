@@ -97,7 +97,7 @@ class LiveGameCoach:
 
             # Récupérer le rang
             summoner = self.api.get_summoner_by_puuid(puuid)
-            if summoner:
+            if summoner and 'id' in summoner:
                 league_entries = self.api.get_league_entries(summoner['id'])
                 if league_entries:
                     ranked_solo = next((e for e in league_entries if e['queueType'] == 'RANKED_SOLO_5x5'), None)
