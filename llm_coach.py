@@ -103,7 +103,21 @@ class LLMCoach:
 
     def _build_performance_prompt(self, stats: Dict, player_name: str) -> str:
         """Construit le prompt pour l'analyse de performance"""
+
+        # Déterminer le rôle principal
+        main_role = "Unknown"
+        if stats.get('roles'):
+            main_role = max(stats['roles'].items(), key=lambda x: x[1])[0]
+            # Traduire les codes Riot en noms lisibles
+            role_names = {
+                'TOP': 'Top', 'JUNGLE': 'Jungle', 'MIDDLE': 'Mid',
+                'BOTTOM': 'ADC', 'UTILITY': 'Support', 'UNKNOWN': 'Flex'
+            }
+            main_role = role_names.get(main_role, main_role)
+
         prompt = f"""Coach LoL - Analyse {player_name} ({stats.get('total_games', 0)} games)
+
+Rôle principal: {main_role}
 
 Stats globales:
 - {stats.get('wins', 0)}W-{stats.get('losses', 0)}L ({stats.get('winrate', 0):.1f}% WR)
@@ -122,16 +136,16 @@ Top champions:"""
                 kda = (cs['kills'] + cs['assists']) / max(cs['deaths'], 1)
                 prompt += f"\n{champ}: {cs['games']}g, {wr:.0f}%WR, {kda:.1f}KDA"
 
-        prompt += """
+        prompt += f"""
 
-Donne analyse pro en 5 sections:
+Analyse ce joueur {main_role} en 5 sections:
 1. Diagnostic (1 para)
 2. Points forts (2-3)
 3. Points critiques (3-4)
-4. Plan d'action (3-5 conseils précis)
-5. Champion pool (lesquels garder/drop)
+4. Plan d'action (3-5 conseils précis pour {main_role})
+5. Champion pool (lesquels garder/drop pour {main_role})
 
-Sois direct, technique, avec chiffres."""
+Adapte tes conseils au rôle {main_role}. Sois direct, technique, avec chiffres."""
         return prompt
 
     def _build_pregame_prompt(self, analysis: Dict, player_name: str, your_rank: str = None) -> str:

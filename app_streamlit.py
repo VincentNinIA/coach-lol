@@ -271,6 +271,18 @@ def show_match_history():
             # Afficher les métriques
             st.markdown("### 📈 Statistiques Générales")
 
+            # Déterminer le rôle principal
+            main_role = "Unknown"
+            if stats.get('roles'):
+                main_role = max(stats['roles'].items(), key=lambda x: x[1])[0]
+                role_names = {
+                    'TOP': 'Top ⚔️', 'JUNGLE': 'Jungle 🌳', 'MIDDLE': 'Mid 🔮',
+                    'BOTTOM': 'ADC 🏹', 'UTILITY': 'Support 🛡️', 'UNKNOWN': 'Flex 🎯'
+                }
+                main_role_display = role_names.get(main_role, main_role)
+                games_on_role = stats['roles'][main_role]
+                st.info(f"🎮 Rôle principal : **{main_role_display}** ({games_on_role}/{stats['total_games']} games)")
+
             col1, col2, col3, col4 = st.columns(4)
 
             with col1:
@@ -334,10 +346,6 @@ def show_match_history():
                     with st.spinner("🧠 Analyse en cours par l'IA..."):
                         player_name = st.session_state.current_player['gameName']
                         analysis_result = st.session_state.llm_coach.analyze_player_performance(stats, player_name)
-
-                        # Debug: afficher le type et la longueur
-                        st.write(f"DEBUG - Type: {type(analysis_result)}, Longueur: {len(analysis_result) if analysis_result else 0}")
-                        st.write(f"DEBUG - Début du contenu: {repr(analysis_result[:200]) if analysis_result else 'None'}")
 
                         if analysis_result and len(analysis_result) > 0:
                             st.session_state.performance_analysis = analysis_result
