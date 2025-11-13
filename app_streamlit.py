@@ -325,12 +325,21 @@ def show_match_history():
                 st.markdown("---")
                 st.markdown("### 🤖 Analyse IA de vos performances")
 
+                # Utiliser un hash des stats pour détecter les changements
+                import json
+                stats_hash = hash(json.dumps(stats, sort_keys=True, default=str))
+
                 # Générer l'analyse si pas déjà en cache
-                if 'performance_analysis' not in st.session_state or st.session_state.get('last_analysis_stats') != stats:
+                if 'performance_analysis' not in st.session_state or st.session_state.get('last_analysis_hash') != stats_hash:
                     with st.spinner("🧠 Analyse en cours par l'IA..."):
                         player_name = st.session_state.current_player['gameName']
-                        st.session_state.performance_analysis = st.session_state.llm_coach.analyze_player_performance(stats, player_name)
-                        st.session_state.last_analysis_stats = stats
+                        analysis_result = st.session_state.llm_coach.analyze_player_performance(stats, player_name)
+
+                        if analysis_result:
+                            st.session_state.performance_analysis = analysis_result
+                            st.session_state.last_analysis_hash = stats_hash
+                        else:
+                            st.session_state.performance_analysis = "❌ L'analyse a retourné un résultat vide"
 
                 # Afficher l'analyse
                 if st.session_state.get('performance_analysis'):
