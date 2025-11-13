@@ -61,13 +61,6 @@ st.markdown("""
         padding: 0.5rem 1rem;
         font-weight: bold;
     }
-    .llm-analysis {
-        background-color: #f8f9fa;
-        padding: 1.5rem;
-        border-radius: 10px;
-        border-left: 4px solid #764ba2;
-        margin: 1rem 0;
-    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -336,7 +329,8 @@ def show_match_history():
                     player_name = st.session_state.current_player['gameName']
                     llm_analysis = st.session_state.llm_coach.analyze_player_performance(stats, player_name)
 
-                st.markdown(f'<div class="llm-analysis">{llm_analysis}</div>', unsafe_allow_html=True)
+                with st.container():
+                    st.markdown(llm_analysis)
 
 def show_pregame_analysis():
     """Onglet d'analyse pré-game"""
@@ -411,8 +405,8 @@ def show_pregame_analysis():
                                 analysis, player_name
                             )
 
-                        st.markdown(f'<div class="llm-analysis">{llm_analysis}</div>',
-                                  unsafe_allow_html=True)
+                        with st.container():
+                            st.markdown(llm_analysis)
 
 def show_champion_stats():
     """Onglet des statistiques par champion"""
@@ -534,8 +528,8 @@ def show_llm_tips():
                 analysis = st.session_state.llm_coach.analyze_champion_matchup(
                     your_champ, enemy_champ, your_rank
                 )
-                st.markdown(f'<div class="llm-analysis">{analysis}</div>',
-                          unsafe_allow_html=True)
+                with st.container():
+                    st.markdown(analysis)
 
     elif tip_type == "Conseil rapide":
         context = st.text_area(
