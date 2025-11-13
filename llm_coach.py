@@ -161,6 +161,7 @@ Adapte tes conseils au rôle {main_role}. Sois direct, technique, avec chiffres.
 
     def _build_pregame_prompt(self, analysis: Dict, player_name: str, your_rank: str = None) -> str:
         """Construit le prompt pour l'analyse pré-game"""
+        from champion_names import get_champion_name
         enemy_analysis = analysis.get('enemy_analysis', {})
 
         # Traduire le rôle du joueur
@@ -179,7 +180,11 @@ Adapte tes conseils au rôle {main_role}. Sois direct, technique, avec chiffres.
         # Infos compactes sur adversaires
         for i, (name, data) in enumerate(enemy_analysis.items(), 1):
             threat = data.get('threat_level', 'UNKNOWN')
-            prompt += f"{i}. {name} ({data.get('rank', '?')})"
+            champion_id = data.get('champion_id', '?')
+            champion_name = get_champion_name(champion_id)
+
+            # Afficher le champion actuel en premier
+            prompt += f"{i}. {name} [{champion_name}] ({data.get('rank', '?')})"
 
             if data.get('wins') and data.get('losses'):
                 prompt += f" - {data['wins']}W-{data['losses']}L ({data.get('winrate', 0):.0f}%)"
@@ -193,7 +198,7 @@ Adapte tes conseils au rôle {main_role}. Sois direct, technique, avec chiffres.
             if data.get('main_champions') and len(data['main_champions']) > 0:
                 # main_champions est maintenant une liste de noms de champions
                 mains = ', '.join(data['main_champions'][:2])
-                prompt += f" - Mains: {mains}"
+                prompt += f" - Mains habituels: {mains}"
 
             prompt += "\n"
 

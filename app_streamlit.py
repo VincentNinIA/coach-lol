@@ -13,6 +13,7 @@ from riot_api import RiotAPI
 from data_analyzer import DataAnalyzer
 from live_game_coach import LiveGameCoach
 from llm_coach import LLMCoach
+from champion_names import get_champion_name
 
 # Configuration de la page
 st.set_page_config(
@@ -415,13 +416,19 @@ def show_pregame_analysis():
                     enemy_analysis = analysis.get('enemy_analysis', {})
 
                     for summoner_name, data in enemy_analysis.items():
-                        with st.expander(f"🔹 {summoner_name}", expanded=True):
-                            col1, col2, col3 = st.columns(3)
+                        # Titre avec champion actuel
+                        champion_id = data.get('champion_id', '?')
+                        champion_name = get_champion_name(champion_id)
+                        title = f"🔹 {summoner_name} ({champion_name})"
+
+                        with st.expander(title, expanded=True):
+                            col1, col2, col3, col4 = st.columns(4)
 
                             with col1:
                                 st.markdown(f"**Rang:** {data.get('rank', 'Unknown')}")
                                 threat = data.get('threat_level', 'UNKNOWN')
-                                st.markdown(f"**Menace:** {threat}")
+                                threat_emoji = {'TRÈS ÉLEVÉ': '🔴', 'ÉLEVÉ': '🟠', 'MOYEN': '🟡', 'FAIBLE': '🟢'}.get(threat, '⚪')
+                                st.markdown(f"**Menace:** {threat_emoji} {threat}")
 
                             with col2:
                                 if data.get('wins') and data.get('losses'):
@@ -433,6 +440,13 @@ def show_pregame_analysis():
                                 if stats:
                                     st.markdown(f"**KDA:** {stats.get('kda_avg', 0):.2f}")
                                     st.markdown(f"**Forme:** {stats.get('wins', 0)}W - {stats.get('losses', 0)}L")
+
+                            with col4:
+                                if data.get('main_champions'):
+                                    mains = ', '.join(data['main_champions'][:3])
+                                    st.markdown(f"**Mains:** {mains}")
+                                else:
+                                    st.markdown(f"**Mains:** Aucune donnée")
 
                     # Analyse LLM
                     if st.session_state.llm_coach and st.session_state.llm_coach.is_available():
