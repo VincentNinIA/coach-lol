@@ -325,12 +325,15 @@ def show_match_history():
                 st.markdown("---")
                 st.markdown("### 🤖 Analyse IA de vos performances")
 
-                with st.spinner("🧠 Analyse en cours par l'IA..."):
-                    player_name = st.session_state.current_player['gameName']
-                    llm_analysis = st.session_state.llm_coach.analyze_player_performance(stats, player_name)
+                # Générer l'analyse si pas déjà en cache
+                if 'performance_analysis' not in st.session_state or st.session_state.get('last_analysis_stats') != stats:
+                    with st.spinner("🧠 Analyse en cours par l'IA..."):
+                        player_name = st.session_state.current_player['gameName']
+                        st.session_state.performance_analysis = st.session_state.llm_coach.analyze_player_performance(stats, player_name)
+                        st.session_state.last_analysis_stats = stats
 
-                with st.container():
-                    st.markdown(llm_analysis)
+                # Afficher l'analyse
+                st.markdown(st.session_state.performance_analysis)
 
 def show_pregame_analysis():
     """Onglet d'analyse pré-game"""
@@ -399,14 +402,17 @@ def show_pregame_analysis():
                         st.markdown("---")
                         st.markdown("### 🤖 Analyse Stratégique IA")
 
-                        with st.spinner("🧠 Génération des conseils..."):
-                            player_name = st.session_state.current_player['gameName']
-                            llm_analysis = st.session_state.llm_coach.analyze_pregame(
-                                analysis, player_name
-                            )
+                        # Générer l'analyse si pas déjà en cache pour cette game
+                        if 'pregame_llm_analysis' not in st.session_state or st.session_state.get('last_pregame_analysis') != analysis:
+                            with st.spinner("🧠 Génération des conseils..."):
+                                player_name = st.session_state.current_player['gameName']
+                                st.session_state.pregame_llm_analysis = st.session_state.llm_coach.analyze_pregame(
+                                    analysis, player_name
+                                )
+                                st.session_state.last_pregame_analysis = analysis
 
-                        with st.container():
-                            st.markdown(llm_analysis)
+                        # Afficher l'analyse
+                        st.markdown(st.session_state.pregame_llm_analysis)
 
 def show_champion_stats():
     """Onglet des statistiques par champion"""
@@ -525,11 +531,13 @@ def show_llm_tips():
 
         if st.button("🧠 Analyser le matchup"):
             with st.spinner("Analyse du matchup..."):
-                analysis = st.session_state.llm_coach.analyze_champion_matchup(
+                st.session_state.matchup_analysis = st.session_state.llm_coach.analyze_champion_matchup(
                     your_champ, enemy_champ, your_rank
                 )
-                with st.container():
-                    st.markdown(analysis)
+
+        # Afficher l'analyse si elle existe
+        if 'matchup_analysis' in st.session_state:
+            st.markdown(st.session_state.matchup_analysis)
 
     elif tip_type == "Conseil rapide":
         context = st.text_area(
