@@ -299,8 +299,7 @@ Tu utilises le vocabulaire technique de LoL (macro, micro, wave management, trad
 Tu es direct, constructif et tu te concentres sur ce qui fait vraiment la différence pour progresser."""},
                     {"role": "user", "content": prompt}
                 ],
-                max_completion_tokens=3000,  # GPT-5 utilise max_completion_tokens au lieu de max_tokens
-                temperature=0.7
+                max_completion_tokens=3000  # GPT-5 utilise max_completion_tokens (temperature=1 par défaut uniquement)
             )
             return response.choices[0].message.content
         except Exception as e:
