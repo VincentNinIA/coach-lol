@@ -126,7 +126,7 @@ def sidebar_config():
             region = st.secrets.get('DEFAULT_REGION', 'EUW')
             st.info(f"🌍 Région : {region}")
 
-            st.caption("💡 Modèle IA : GPT-4o (analyse professionnelle niveau Challenger)")
+            st.caption("💡 Modèle IA : GPT-5 (analyse professionnelle niveau Challenger)")
             st.caption("📝 Pour modifier la configuration, éditez `.streamlit/secrets.toml`")
 
         st.markdown("---")

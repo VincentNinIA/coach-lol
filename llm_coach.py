@@ -291,7 +291,7 @@ Sois très spécifique et actionnable. Utilise des emojis.
         """Appelle l'API OpenAI GPT"""
         try:
             response = self.client.chat.completions.create(
-                model="gpt-4o",  # GPT-4o pour une analyse de qualité professionnelle
+                model="gpt-5",  # GPT-5 pour une analyse de qualité professionnelle optimale
                 messages=[
                     {"role": "system", "content": """Tu es un coach professionnel de League of Legends de haut niveau (Challenger/Master).
 Tu analyses les performances avec un œil expert, tu identifies les patterns de jeu, les erreurs récurrentes et tu donnes des conseils précis et actionnables.
