@@ -130,11 +130,22 @@ Top champions:"""
 
         # Limiter à top 3 champions pour réduire la taille
         if stats.get('champions'):
+            role_names = {
+                'TOP': 'Top', 'JUNGLE': 'Jgl', 'MIDDLE': 'Mid',
+                'BOTTOM': 'ADC', 'UTILITY': 'Sup', 'UNKNOWN': 'Flex'
+            }
             top_champs = sorted(stats['champions'].items(), key=lambda x: x[1]['games'], reverse=True)[:3]
             for champ, cs in top_champs:
                 wr = (cs['wins'] / cs['games'] * 100) if cs['games'] > 0 else 0
                 kda = (cs['kills'] + cs['assists']) / max(cs['deaths'], 1)
-                prompt += f"\n{champ}: {cs['games']}g, {wr:.0f}%WR, {kda:.1f}KDA"
+
+                # Déterminer le rôle principal pour ce champion
+                champ_role = "?"
+                if 'roles' in cs and cs['roles']:
+                    main_champ_role = max(cs['roles'].items(), key=lambda x: x[1])[0]
+                    champ_role = role_names.get(main_champ_role, main_champ_role)
+
+                prompt += f"\n{champ} ({champ_role}): {cs['games']}g, {wr:.0f}%WR, {kda:.1f}KDA"
 
         prompt += f"""
 

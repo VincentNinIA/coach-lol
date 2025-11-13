@@ -60,14 +60,21 @@ class DataAnalyzer:
 
             # Stats par champion
             champ_name = player['championName']
+            role = player.get('teamPosition', 'UNKNOWN')
+
             stats['champions'][champ_name]['games'] += 1
             stats['champions'][champ_name]['wins'] += 1 if win else 0
             stats['champions'][champ_name]['kills'] += player['kills']
             stats['champions'][champ_name]['deaths'] += player['deaths']
             stats['champions'][champ_name]['assists'] += player['assists']
 
-            # Rôle
-            stats['roles'][player.get('teamPosition', 'UNKNOWN')] += 1
+            # Tracker le rôle le plus joué pour ce champion
+            if 'roles' not in stats['champions'][champ_name]:
+                stats['champions'][champ_name]['roles'] = defaultdict(int)
+            stats['champions'][champ_name]['roles'][role] += 1
+
+            # Rôle global
+            stats['roles'][role] += 1
 
             # Performance récente
             game_duration_min = info['gameDuration'] / 60
