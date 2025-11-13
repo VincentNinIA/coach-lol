@@ -399,6 +399,15 @@ def show_pregame_analysis():
                         analysis = live_coach.analyze_pregame(game, puuid)
                         st.session_state.pregame_analysis = analysis
 
+                    # Afficher le rôle du joueur
+                    your_role = analysis.get('your_role', 'UNKNOWN')
+                    role_names = {
+                        'TOP': 'Top ⚔️', 'JUNGLE': 'Jungle 🌳', 'MIDDLE': 'Mid 🔮',
+                        'BOTTOM': 'ADC 🏹', 'UTILITY': 'Support 🛡️', 'UNKNOWN': 'Unknown 🎯'
+                    }
+                    your_role_display = role_names.get(your_role, your_role)
+                    st.info(f"🎮 Votre rôle détecté : **{your_role_display}**")
+
                     # Afficher l'analyse
                     st.markdown("---")
                     st.markdown("### 👥 Équipe Adverse")

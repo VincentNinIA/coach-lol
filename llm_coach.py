@@ -163,7 +163,15 @@ Adapte tes conseils au rôle {main_role}. Sois direct, technique, avec chiffres.
         """Construit le prompt pour l'analyse pré-game"""
         enemy_analysis = analysis.get('enemy_analysis', {})
 
-        prompt = f"""Briefing pré-game {player_name}"""
+        # Traduire le rôle du joueur
+        your_role = analysis.get('your_role', 'UNKNOWN')
+        role_names = {
+            'TOP': 'Top', 'JUNGLE': 'Jungle', 'MIDDLE': 'Mid',
+            'BOTTOM': 'ADC', 'UTILITY': 'Support', 'UNKNOWN': '?'
+        }
+        your_role_display = role_names.get(your_role, your_role)
+
+        prompt = f"""Briefing pré-game {player_name} - Rôle: {your_role_display}"""
         if your_rank:
             prompt += f" [{your_rank}]"
         prompt += "\n\nEnnemis:\n"
@@ -189,15 +197,15 @@ Adapte tes conseils au rôle {main_role}. Sois direct, technique, avec chiffres.
 
             prompt += "\n"
 
-        prompt += """
-Analyse pro en 5 sections:
-1. Threat level (chaque ennemi 1-5, pourquoi, comment contrer)
-2. Win conditions (2-3 priorités)
-3. Lose conditions (2-3 pièges)
-4. Gameplan (Early/Mid/Late)
-5. Calls prioritaires (3-5 tactiques)
+        prompt += f"""
+Analyse pro en 5 sections (adapté au rôle {your_role_display}):
+1. Threat level (chaque ennemi 1-5, pourquoi, comment contrer depuis {your_role_display})
+2. Win conditions (2-3 priorités pour {your_role_display})
+3. Lose conditions (2-3 pièges à éviter en {your_role_display})
+4. Gameplan (Early/Mid/Late spécifique {your_role_display})
+5. Calls prioritaires (3-5 tactiques {your_role_display})
 
-Direct, technique, spécifique."""
+Direct, technique, spécifique au rôle {your_role_display}."""
         return prompt
 
     def _build_matchup_prompt(self, your_champ: str, enemy_champ: str,

@@ -28,6 +28,8 @@ class LiveGameCoach:
             'game_queue': game_data.get('gameQueueConfigId'),
             'your_team': [],
             'enemy_team': [],
+            'your_role': 'Unknown',
+            'your_champion': 'Unknown',
             'recommendations': [],
             'threats': []
         }
@@ -39,17 +41,28 @@ class LiveGameCoach:
         for participant in participants:
             if participant['puuid'] == player_puuid:
                 player_team_id = participant['teamId']
+                # Stocker le rôle et champion du joueur
+                analysis['your_role'] = participant.get('teamPosition', 'UNKNOWN')
+                analysis['your_champion'] = participant.get('championId', 'Unknown')
                 break
 
         if player_team_id is None:
             return analysis
 
         for participant in participants:
+            # Utiliser riotId si disponible, sinon summonerName
+            summoner_name = 'Unknown'
+            if participant.get('riotId'):
+                summoner_name = participant['riotId']
+            elif participant.get('summonerName'):
+                summoner_name = participant['summonerName']
+
             player_info = {
-                'summoner_name': participant.get('summonerName', 'Unknown'),
+                'summoner_name': summoner_name,
                 'champion_id': participant.get('championId'),
                 'puuid': participant.get('puuid'),
-                'team_id': participant.get('teamId')
+                'team_id': participant.get('teamId'),
+                'role': participant.get('teamPosition', 'UNKNOWN')
             }
 
             if participant['teamId'] == player_team_id:
