@@ -335,11 +335,15 @@ def show_match_history():
                         player_name = st.session_state.current_player['gameName']
                         analysis_result = st.session_state.llm_coach.analyze_player_performance(stats, player_name)
 
-                        if analysis_result:
+                        # Debug: afficher le type et la longueur
+                        st.write(f"DEBUG - Type: {type(analysis_result)}, Longueur: {len(analysis_result) if analysis_result else 0}")
+                        st.write(f"DEBUG - Début du contenu: {repr(analysis_result[:200]) if analysis_result else 'None'}")
+
+                        if analysis_result and len(analysis_result) > 0:
                             st.session_state.performance_analysis = analysis_result
                             st.session_state.last_analysis_hash = stats_hash
                         else:
-                            st.session_state.performance_analysis = "❌ L'analyse a retourné un résultat vide"
+                            st.session_state.performance_analysis = f"❌ L'analyse a retourné un résultat vide (type={type(analysis_result)}, len={len(analysis_result) if analysis_result else 0})"
 
                 # Afficher l'analyse
                 if st.session_state.get('performance_analysis'):
