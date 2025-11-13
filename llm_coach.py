@@ -177,14 +177,14 @@ Adapte tes conseils au rôle {main_role}. Sois direct, technique, avec chiffres.
             prompt += f" [{your_rank}]"
         prompt += "\n\nEnnemis:\n"
 
-        # Infos compactes sur adversaires
+        # Infos compactes sur adversaires - FOCUS sur le champion ACTUEL joué
         for i, (name, data) in enumerate(enemy_analysis.items(), 1):
             threat = data.get('threat_level', 'UNKNOWN')
             champion_id = data.get('champion_id', '?')
             champion_name = get_champion_name(champion_id)
 
-            # Afficher le champion actuel en premier
-            prompt += f"{i}. {name} [{champion_name}] ({data.get('rank', '?')})"
+            # Champion actuel = le plus important
+            prompt += f"{i}. {name} joue {champion_name} ({data.get('rank', '?')})"
 
             if data.get('wins') and data.get('losses'):
                 prompt += f" - {data['wins']}W-{data['losses']}L ({data.get('winrate', 0):.0f}%)"
@@ -195,22 +195,20 @@ Adapte tes conseils au rôle {main_role}. Sois direct, technique, avec chiffres.
 
             prompt += f" - Menace: {threat}"
 
-            if data.get('main_champions') and len(data['main_champions']) > 0:
-                # main_champions est maintenant une liste de noms de champions
-                mains = ', '.join(data['main_champions'][:2])
-                prompt += f" - Mains habituels: {mains}"
-
             prompt += "\n"
 
         prompt += f"""
-Analyse pro en 5 sections (adapté au rôle {your_role_display}):
-1. Threat level (chaque ennemi 1-5, pourquoi, comment contrer depuis {your_role_display})
-2. Win conditions (2-3 priorités pour {your_role_display})
-3. Lose conditions (2-3 pièges à éviter en {your_role_display})
-4. Gameplan (Early/Mid/Late spécifique {your_role_display})
-5. Calls prioritaires (3-5 tactiques {your_role_display})
+IMPORTANT: Analyse UNIQUEMENT les champions joués ACTUELLEMENT dans cette partie (listés ci-dessus).
+NE PAS parler des champions habituels qui ne sont PAS dans cette game.
 
-Direct, technique, spécifique au rôle {your_role_display}."""
+Analyse pro en 5 sections (adapté au rôle {your_role_display}):
+1. Threat level (CHAQUE champion ennemi actuel 1-5, pourquoi, comment contrer depuis {your_role_display})
+2. Win conditions (2-3 priorités pour {your_role_display} contre CES picks)
+3. Lose conditions (2-3 pièges à éviter contre CES champions)
+4. Gameplan (Early/Mid/Late contre CETTE composition)
+5. Calls prioritaires (3-5 tactiques contre CES champions spécifiques)
+
+Focus UNIQUEMENT sur les champions actuellement dans la partie. Direct, technique."""
         return prompt
 
     def _build_matchup_prompt(self, your_champ: str, enemy_champ: str,
