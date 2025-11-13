@@ -3,12 +3,44 @@ Module pour interagir avec l'API Riot Games
 """
 import requests
 import time
+import os
 from typing import Dict, List, Optional
-from config import RIOT_API_KEY, API_BASE_URL, CONTINENTAL_BASE_URL, REGIONS, ROUTING, DEFAULT_REGION
+
+# Constantes définies dans le module (indépendant de config.py)
+REGIONS = {
+    'EUW': 'euw1',
+    'EUN': 'eun1',
+    'NA': 'na1',
+    'KR': 'kr',
+    'BR': 'br1',
+    'JP': 'jp1',
+    'LA1': 'la1',
+    'LA2': 'la2',
+    'OC': 'oc1',
+    'TR': 'tr1',
+    'RU': 'ru'
+}
+
+ROUTING = {
+    'EUW': 'europe',
+    'EUN': 'europe',
+    'NA': 'americas',
+    'BR': 'americas',
+    'LA1': 'americas',
+    'LA2': 'americas',
+    'KR': 'asia',
+    'JP': 'asia',
+    'OC': 'sea',
+    'TR': 'europe',
+    'RU': 'europe'
+}
+
+API_BASE_URL = 'https://{region}.api.riotgames.com'
+CONTINENTAL_BASE_URL = 'https://{routing}.api.riotgames.com'
 
 class RiotAPI:
-    def __init__(self, api_key: str = RIOT_API_KEY, region: str = DEFAULT_REGION):
-        self.api_key = api_key
+    def __init__(self, api_key: str = None, region: str = 'EUW'):
+        self.api_key = api_key or os.getenv('RIOT_API_KEY', '')
         self.region = REGIONS.get(region, REGIONS['EUW'])
         self.routing = ROUTING.get(region, 'europe')
         self.headers = {

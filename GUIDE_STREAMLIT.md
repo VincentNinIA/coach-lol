@@ -15,24 +15,26 @@ Cela installera :
 - `plotly` : Visualisations interactives
 - `anthropic` : API Claude pour l'analyse IA
 
-### 2. Configuration des clés API
+### 2. Configuration des clés API avec Streamlit Secrets
 
-Vous avez deux options :
+**Méthode recommandée pour Streamlit** : Utiliser le fichier `secrets.toml`
 
-#### Option A : Fichier .env (recommandé)
 ```bash
-cp .env.example .env
-# Éditez le fichier .env avec vos clés
+# Copiez le fichier template
+cp .streamlit/secrets.toml.example .streamlit/secrets.toml
 ```
 
-#### Option B : Directement dans config.py
-```python
-# config.py
-RIOT_API_KEY = 'RGAPI-votre-cle-ici'
+Éditez le fichier `.streamlit/secrets.toml` :
+```toml
+RIOT_API_KEY = "RGAPI-votre-cle-ici"
+OPENAI_API_KEY = "sk-votre-cle-ici"
+DEFAULT_REGION = "EUW"
 ```
 
-#### Option C : Via l'interface Streamlit
-Vous pouvez saisir les clés directement dans la sidebar de l'application.
+**Avantages** :
+- ✅ Pas besoin de saisir les clés à chaque démarrage
+- ✅ Sécurisé (le fichier est automatiquement gitignored)
+- ✅ Configuration centralisée
 
 ### 3. Obtenir les clés API
 
@@ -41,13 +43,15 @@ Vous pouvez saisir les clés directement dans la sidebar de l'application.
 2. Connectez-vous avec votre compte Riot
 3. Cliquez sur "REGENERATE API KEY"
 4. Copiez votre clé (valable 24h)
-5. **Gratuit et sans limitation majeure**
+5. Collez-la dans `.streamlit/secrets.toml`
+6. **Gratuit et sans limitation majeure**
 
-#### Clé API Anthropic (OPTIONNEL - pour l'IA)
-1. Allez sur [https://console.anthropic.com/](https://console.anthropic.com/)
+#### Clé API OpenAI (OPTIONNEL - pour l'IA)
+1. Allez sur [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
 2. Créez un compte
 3. Obtenez votre clé API
-4. **Offre gratuite disponible** pour tester
+4. Collez-la dans `.streamlit/secrets.toml`
+5. **$5 de crédit gratuit** = ~3000 analyses !
 
 ## 🎯 Lancement de l'application
 
@@ -68,20 +72,18 @@ python coach_lol.py
 
 ### 🔧 Configuration initiale (Sidebar)
 
-1. **API Riot Games**
-   - Cliquez sur "API Riot Games" dans la sidebar
-   - Entrez votre clé API Riot
-   - Sélectionnez votre région (EUW, NA, etc.)
+1. **Vérification des APIs**
+   - La sidebar affiche le statut de vos clés API
+   - ✓ API Riot configurée (vert) = OK
+   - ❌ API Riot non configurée (rouge) = Éditez `.streamlit/secrets.toml`
+   - ⚠️ Analyse IA désactivée (orange) = Optionnel
 
-2. **API LLM (Optionnel)**
-   - Cliquez sur "API LLM (Analyse IA)"
-   - Entrez votre clé Anthropic
-   - Un checkmark vert apparaîtra si la clé est valide
-
-3. **Connexion**
+2. **Connexion**
    - Entrez votre nom d'invocateur
    - Entrez votre tag (ex: EUW, 1234, etc.)
    - Cliquez sur "🔌 Se connecter"
+
+**Note** : Les clés API sont maintenant gérées via `.streamlit/secrets.toml`, vous n'avez plus à les saisir dans l'interface !
 
 ### 📊 Onglet 1 : Mon Historique
 
@@ -203,7 +205,8 @@ python coach_lol.py
 ### "Erreur 403 Forbidden"
 → Votre clé API Riot est invalide ou expirée
 - Régénérez-la sur le portail développeur
-- Vérifiez que vous l'avez bien copiée entièrement
+- Mettez à jour `.streamlit/secrets.toml` avec la nouvelle clé
+- Relancez l'application
 
 ### "Aucune partie en cours"
 → Vous n'êtes pas actuellement en partie
@@ -212,10 +215,11 @@ python coach_lol.py
 - Réessayez
 
 ### "Analyse IA désactivée"
-→ Vous n'avez pas configuré la clé Anthropic
+→ Vous n'avez pas configuré la clé OpenAI
 - C'est normal ! L'analyse IA est optionnelle
 - L'application fonctionne sans, mais sans les conseils IA
-- Configurez la clé si vous voulez l'analyse intelligente
+- Ajoutez `OPENAI_API_KEY` dans `.streamlit/secrets.toml` si vous voulez l'analyse intelligente
+- Relancez l'application après modification
 
 ### "Rate limit dépassé"
 → Trop de requêtes API en peu de temps

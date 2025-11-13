@@ -71,23 +71,27 @@ Cela installera :
 
 📊 **[Voir les tarifs détaillés](TARIFS_OPENAI.md)** - Spoiler : c'est très économique !
 
-#### Configuration
+#### Configuration avec Streamlit Secrets (recommandé)
 
-**Option A : Fichier .env (recommandé)**
+```bash
+# Copiez le fichier template
+cp .streamlit/secrets.toml.example .streamlit/secrets.toml
+
+# Éditez le fichier avec vos vraies clés API
+```
+
+Éditez `.streamlit/secrets.toml` :
+```toml
+RIOT_API_KEY = "RGAPI-votre-cle-ici"
+OPENAI_API_KEY = "sk-votre-cle-ici"
+DEFAULT_REGION = "EUW"
+```
+
+**Alternative : Fichier .env (pour CLI)**
 ```bash
 cp .env.example .env
-# Éditez .env avec vos clés
+# Éditez .env avec vos clés (pour coach_lol.py uniquement)
 ```
-
-**Option B : Modifier config.py**
-```python
-# config.py
-RIOT_API_KEY = 'RGAPI-VOTRE-CLE-ICI'
-DEFAULT_REGION = 'EUW'
-```
-
-**Option C : Via l'interface**
-Vous pouvez entrer les clés directement dans l'application.
 
 ## 📖 Utilisation
 
@@ -99,6 +103,11 @@ streamlit run app_streamlit.py
 L'application s'ouvrira dans votre navigateur : `http://localhost:8501`
 
 **📚 [Guide complet Streamlit](GUIDE_STREAMLIT.md)**
+
+### Déploiement sur Streamlit Cloud
+Vous pouvez déployer l'application gratuitement sur Streamlit Cloud !
+
+**☁️ [Guide de déploiement](STREAMLIT_CLOUD.md)**
 
 ### Interface CLI (Alternative)
 ```bash

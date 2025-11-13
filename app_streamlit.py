@@ -13,7 +13,6 @@ from riot_api import RiotAPI
 from data_analyzer import DataAnalyzer
 from live_game_coach import LiveGameCoach
 from llm_coach import LLMCoach
-from config import RIOT_API_KEY, DEFAULT_REGION
 
 # Configuration de la page
 st.set_page_config(
@@ -87,12 +86,14 @@ if 'connected' not in st.session_state:
 def init_apis():
     """Initialise les APIs"""
     if st.session_state.api is None:
-        riot_key = st.session_state.get('riot_api_key', RIOT_API_KEY)
-        region = st.session_state.get('region', DEFAULT_REGION)
+        # Récupérer depuis les secrets Streamlit
+        riot_key = st.secrets.get('RIOT_API_KEY', '')
+        region = st.secrets.get('DEFAULT_REGION', 'EUW')
         st.session_state.api = RiotAPI(api_key=riot_key, region=region)
 
     if st.session_state.llm_coach is None:
-        openai_key = st.session_state.get('openai_api_key', None)
+        # Récupérer depuis les secrets Streamlit
+        openai_key = st.secrets.get('OPENAI_API_KEY', None)
         st.session_state.llm_coach = LLMCoach(api_key=openai_key, provider="openai")
 
 def sidebar_config():
@@ -103,41 +104,30 @@ def sidebar_config():
 
         st.header("🔑 Configuration")
 
-        # Configuration API Riot
-        with st.expander("API Riot Games", expanded=not st.session_state.connected):
-            riot_key = st.text_input(
-                "Clé API Riot",
-                value=st.session_state.get('riot_api_key', RIOT_API_KEY),
-                type="password",
-                help="Obtenez votre clé sur https://developer.riotgames.com/"
-            )
-            st.session_state.riot_api_key = riot_key
+        # Afficher le statut des APIs
+        with st.expander("📋 Statut des APIs", expanded=True):
+            # Vérifier Riot API
+            riot_key = st.secrets.get('RIOT_API_KEY', '')
+            if riot_key and riot_key != "RGAPI-VOTRE-CLE-ICI":
+                st.success("✓ API Riot configurée")
+            else:
+                st.error("❌ API Riot non configurée")
+                st.caption("Éditez le fichier `.streamlit/secrets.toml`")
 
-            region = st.selectbox(
-                "Région",
-                options=['EUW', 'EUN', 'NA', 'KR', 'BR', 'JP', 'LA1', 'LA2', 'OC', 'TR', 'RU'],
-                index=0,
-                help="Sélectionnez votre région"
-            )
-            st.session_state.region = region
-
-        # Configuration LLM
-        with st.expander("API LLM (Analyse IA)", expanded=False):
-            openai_key = st.text_input(
-                "Clé API OpenAI (GPT)",
-                value=st.session_state.get('openai_api_key', ''),
-                type="password",
-                help="Obtenez votre clé sur https://platform.openai.com/api-keys"
-            )
-            st.session_state.openai_api_key = openai_key
-
-            if openai_key:
+            # Vérifier OpenAI API
+            openai_key = st.secrets.get('OPENAI_API_KEY', '')
+            if openai_key and openai_key != "sk-VOTRE-CLE-ICI":
                 st.success("✓ Analyse IA activée (OpenAI GPT)")
             else:
-                st.warning("Analyse IA désactivée")
+                st.warning("⚠️ Analyse IA désactivée (optionnel)")
+                st.caption("Ajoutez OPENAI_API_KEY dans `.streamlit/secrets.toml`")
+
+            # Afficher la région
+            region = st.secrets.get('DEFAULT_REGION', 'EUW')
+            st.info(f"🌍 Région : {region}")
 
             st.caption("💡 Modèle utilisé : GPT-4o-mini (économique et performant)")
-            st.caption("Vous pouvez modifier le modèle dans llm_coach.py")
+            st.caption("📝 Pour modifier la configuration, éditez `.streamlit/secrets.toml`")
 
         st.markdown("---")
 

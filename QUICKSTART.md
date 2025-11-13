@@ -16,7 +16,17 @@ pip install -r requirements.txt
 3. Cliquez sur **"REGENERATE API KEY"**
 4. Copiez la clé (commence par `RGAPI-`)
 
-### 3. Lancez l'application (30 secondes)
+### 3. Configurez vos clés API (1 minute)
+
+```bash
+# Copiez le fichier template
+cp .streamlit/secrets.toml.example .streamlit/secrets.toml
+
+# Éditez le fichier avec vos clés
+# Remplacez RGAPI-VOTRE-CLE-ICI par votre vraie clé Riot
+```
+
+### 4. Lancez l'application (30 secondes)
 
 ```bash
 streamlit run app_streamlit.py
@@ -24,14 +34,12 @@ streamlit run app_streamlit.py
 
 L'application s'ouvre dans votre navigateur !
 
-### 4. Configuration dans l'app (30 secondes)
+### 5. Connexion (30 secondes)
 
-1. **Sidebar gauche** → Cliquez sur "API Riot Games"
-2. Collez votre clé API
-3. Sélectionnez votre région (EUW par défaut)
-4. Entrez votre **nom d'invocateur** et votre **tag**
+1. **Sidebar gauche** → Vérifiez que "✓ API Riot configurée" s'affiche
+2. Entrez votre **nom d'invocateur** et votre **tag**
    - Exemple : `Faker` et `KR1`
-5. Cliquez sur **"🔌 Se connecter"**
+3. Cliquez sur **"🔌 Se connecter"**
 
 ✅ **C'est tout ! Vous êtes prêt !**
 
@@ -67,9 +75,10 @@ L'analyse IA vous donne des **conseils personnalisés** ultra précis.
 💰 Une analyse coûte ~0.2 centime avec GPT-4o-mini
 
 ### Configurer dans l'app
-1. **Sidebar** → "API LLM (Analyse IA)"
-2. Collez votre clé
-3. ✅ "Analyse IA activée" s'affiche
+1. Éditez le fichier **`.streamlit/secrets.toml`**
+2. Ajoutez votre clé : `OPENAI_API_KEY = "sk-votre-cle-ici"`
+3. Relancez l'application
+4. ✅ "Analyse IA activée" s'affiche dans la sidebar
 
 **Maintenant vos analyses incluent des conseils IA personnalisés !**
 
@@ -96,7 +105,7 @@ L'analyse IA vous donne des **conseils personnalisés** ultra précis.
 ## ❓ Problèmes ?
 
 ### "403 Forbidden" / "Compte introuvable"
-→ Vérifiez votre **clé API** (valable 24h seulement)
+→ Vérifiez votre **clé API** dans `.streamlit/secrets.toml` (valable 24h seulement)
 → Vérifiez votre **nom + tag** (ex: Faker#KR1)
 
 ### "Aucune partie en cours"

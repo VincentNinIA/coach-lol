@@ -41,8 +41,9 @@ env/
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# Streamlit
-.streamlit/
+# Streamlit secrets (mais pas les exemples)
+.streamlit/secrets.toml
+!.streamlit/secrets.toml.example
 
 # Logs
 *.log
