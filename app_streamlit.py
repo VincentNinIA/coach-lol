@@ -356,7 +356,7 @@ def show_pregame_analysis():
         """)
 
     with col2:
-        if st.button("🔍 Analyser la partie en cours", use_column_width=True):
+        if st.button("🔍 Analyser la partie en cours", use_container_width=True):
             with st.spinner("Recherche d'une partie active..."):
                 init_apis()
                 puuid = st.session_state.current_player['puuid']
@@ -420,7 +420,7 @@ def show_champion_stats():
 
     nb_matches = st.slider("Nombre de parties", 10, 100, 50, key="champ_matches")
 
-    if st.button("📊 Analyser mes champions", use_column_width=True):
+    if st.button("📊 Analyser mes champions", use_container_width=True):
         with st.spinner("Analyse en cours..."):
             init_apis()
             puuid = st.session_state.current_player['puuid']
