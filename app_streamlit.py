@@ -99,7 +99,7 @@ def init_apis():
 def sidebar_config():
     """Sidebar pour la configuration"""
     with st.sidebar:
-        st.image("https://via.placeholder.com/300x100/667eea/ffffff?text=Coach+LoL", use_column_width=True)
+        st.image("https://via.placeholder.com/300x100/667eea/ffffff?text=Coach+LoL", use_container_width=True)
         st.markdown("---")
 
         st.header("🔑 Configuration")
@@ -311,7 +311,7 @@ def show_match_history():
                     )
                 ])
                 fig_wr.update_layout(title="Répartition Victoires/Défaites")
-                st.plotly_chart(fig_wr, use_column_width=True)
+                st.plotly_chart(fig_wr, use_container_width=True)
 
             with col2:
                 # Top champions
@@ -325,7 +325,7 @@ def show_match_history():
                         go.Bar(x=champ_names, y=champ_games, marker_color='#667eea')
                     ])
                     fig_champs.update_layout(title="Top 5 Champions (parties jouées)")
-                    st.plotly_chart(fig_champs, use_column_width=True)
+                    st.plotly_chart(fig_champs, use_container_width=True)
 
             # Analyse LLM
             if st.session_state.llm_coach and st.session_state.llm_coach.is_available():
@@ -462,7 +462,7 @@ def show_champion_stats():
             # Afficher le tableau
             st.dataframe(
                 df,
-                use_column_width=True,
+                use_container_width=True,
                 hide_index=True,
                 column_config={
                     "Winrate (%)": st.column_config.ProgressColumn(
@@ -487,7 +487,7 @@ def show_champion_stats():
                     color='Winrate (%)',
                     color_continuous_scale='RdYlGn'
                 )
-                st.plotly_chart(fig_wr, use_column_width=True)
+                st.plotly_chart(fig_wr, use_container_width=True)
 
             with col2:
                 # KDA par champion
@@ -499,7 +499,7 @@ def show_champion_stats():
                     color='KDA',
                     color_continuous_scale='Blues'
                 )
-                st.plotly_chart(fig_kda, use_column_width=True)
+                st.plotly_chart(fig_kda, use_container_width=True)
 
 def show_llm_tips():
     """Onglet des conseils IA"""
