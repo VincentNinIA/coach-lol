@@ -126,7 +126,7 @@ def sidebar_config():
             region = st.secrets.get('DEFAULT_REGION', 'EUW')
             st.info(f"🌍 Région : {region}")
 
-            st.caption("💡 Modèle utilisé : GPT-4o-mini (économique et performant)")
+            st.caption("💡 Modèle IA : GPT-4o (analyse professionnelle niveau Challenger)")
             st.caption("📝 Pour modifier la configuration, éditez `.streamlit/secrets.toml`")
 
         st.markdown("---")
@@ -507,7 +507,7 @@ def show_llm_tips():
 
     if not st.session_state.llm_coach or not st.session_state.llm_coach.is_available():
         st.warning("⚠️ Configurez votre clé API OpenAI dans la sidebar pour activer cette fonctionnalité")
-        st.info("💰 OpenAI offre $5 de crédit gratuit pour commencer. Modèle utilisé : GPT-4o-mini (très économique)")
+        st.info("💰 OpenAI offre $5 de crédit gratuit = ~125 analyses PRO avec GPT-4o (~4¢/analyse)")
         return
 
     st.markdown("### 🎯 Obtenez des conseils personnalisés")

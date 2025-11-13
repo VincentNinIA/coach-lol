@@ -103,42 +103,71 @@ class LLMCoach:
 
     def _build_performance_prompt(self, stats: Dict, player_name: str) -> str:
         """Construit le prompt pour l'analyse de performance"""
-        prompt = f"""Tu es un coach professionnel de League of Legends. Analyse les statistiques suivantes du joueur {player_name} et fournis une analyse détaillée avec des conseils concrets pour s'améliorer.
+        prompt = f"""ANALYSE DE PERFORMANCE - {player_name}
+=====================================
 
-STATISTIQUES DU JOUEUR :
-=========================
+📊 DONNÉES BRUTES ({stats.get('total_games', 0)} parties analysées) :
 
-Statistiques générales ({stats.get('total_games', 0)} parties) :
-- Victoires / Défaites : {stats.get('wins', 0)}W - {stats.get('losses', 0)}L
-- Winrate : {stats.get('winrate', 0):.1f}%
-- KDA moyen : {stats.get('kda_avg', 0):.2f}
-- K/D/A : {stats.get('avg_kills', 0):.1f} / {stats.get('avg_deaths', 0):.1f} / {stats.get('avg_assists', 0):.1f}
-- CS/min moyen : {stats.get('cs_per_min_avg', 0):.1f}
-- Vision score moyen : {stats.get('vision_score_avg', 0):.1f}
+PERFORMANCE GLOBALE :
+- Record: {stats.get('wins', 0)}W - {stats.get('losses', 0)}L ({stats.get('winrate', 0):.1f}% WR)
+- KDA: {stats.get('avg_kills', 0):.1f} / {stats.get('avg_deaths', 0):.1f} / {stats.get('avg_assists', 0):.1f} = {stats.get('kda_avg', 0):.2f} KDA
+- Farm: {stats.get('cs_per_min_avg', 0):.1f} CS/min
+- Vision Score: {stats.get('vision_score_avg', 0):.1f} par game
+- Participation aux kills: {stats.get('kill_participation', 0):.1f}%
 
-Champions les plus joués :
-"""
-        # Ajouter les stats des champions
+CHAMPION POOL (Top 5 par nombre de games) :"""
+
+        # Ajouter les stats détaillées des champions
         if stats.get('champions'):
             top_champs = sorted(stats['champions'].items(), key=lambda x: x[1]['games'], reverse=True)[:5]
             for champ, champ_stats in top_champs:
                 games = champ_stats['games']
                 winrate = (champ_stats['wins'] / games * 100) if games > 0 else 0
                 kda = (champ_stats['kills'] + champ_stats['assists']) / max(champ_stats['deaths'], 1)
-                prompt += f"\n- {champ} : {games} games, {winrate:.1f}% WR, {kda:.2f} KDA"
+                avg_kills = champ_stats['kills'] / games
+                avg_deaths = champ_stats['deaths'] / games
+                avg_assists = champ_stats['assists'] / games
+                prompt += f"\n  {champ}:"
+                prompt += f"\n    - {games} games | {winrate:.1f}% WR"
+                prompt += f"\n    - {avg_kills:.1f}/{avg_deaths:.1f}/{avg_assists:.1f} = {kda:.2f} KDA"
 
         prompt += """
 
-DEMANDE :
-=========
-Fournis une analyse structurée en 4 sections :
+🎯 TON RÔLE EN TANT QUE COACH PRO :
 
-1. **Points forts** : Identifie 2-3 points positifs basés sur les stats
-2. **Points à améliorer** : Identifie 2-3 aspects qui nécessitent du travail
-3. **Conseils prioritaires** : Donne 3-5 conseils concrets et actionnables
-4. **Focus champions** : Recommande sur quels champions se concentrer et pourquoi
+Analyse ces données avec un œil d'expert Challenger/Master. Identifie les VRAIES forces et faiblesses, pas les généralités.
 
-Sois direct, constructif et précis. Utilise des emojis pour rendre l'analyse plus lisible.
+Structure ton analyse en 5 sections :
+
+## 1. 🔍 DIAGNOSTIC INSTANTANÉ
+Un paragraphe direct qui résume le profil du joueur (style de jeu, niveau estimé, tendances principales).
+
+## 2. ✅ POINTS FORTS (2-3 éléments)
+Identifie ce qui fonctionne VRAIMENT. Sois spécifique avec les chiffres.
+Exemple: "CS/min à 7.2 → bon farm, tu connais tes matchups en lane"
+
+## 3. ⚠️ POINTS CRITIQUES À FIX (3-4 éléments prioritaires)
+Les problèmes qui coûtent des games. Pour chaque point :
+- Le problème identifié (avec les stats qui le prouvent)
+- Pourquoi ça te coûte des victoires
+- Impact sur ton MMR/LP
+
+## 4. 💡 PLAN D'ACTION CONCRET (3-5 conseils)
+Des conseils ACTIONNABLES, pas de généralités. Format :
+- Quoi faire exactement
+- Comment le faire
+- Comment mesurer si ça marche
+
+## 5. 🎮 STRATÉGIE CHAMPION POOL
+- Quels champions one-trick/main pour monter
+- Lesquels drop ou limiter
+- Pourquoi (basé sur tes stats)
+
+IMPORTANT :
+- Utilise le vocabulaire technique LoL (macro, micro, wave management, etc.)
+- Sois direct et constructif, pas gentil pour être gentil
+- Compare aux benchmarks de l'elo quand c'est pertinent
+- Donne des objectifs chiffrés quand possible
 """
         return prompt
 
@@ -146,40 +175,84 @@ Sois direct, constructif et précis. Utilise des emojis pour rendre l'analyse pl
         """Construit le prompt pour l'analyse pré-game"""
         enemy_analysis = analysis.get('enemy_analysis', {})
 
-        prompt = f"""Tu es un coach professionnel de League of Legends. Une partie va commencer et tu dois analyser l'équipe adverse pour donner des conseils stratégiques à {player_name}"""
+        prompt = f"""🎯 BRIEFING PRÉ-GAME - {player_name}"""
 
         if your_rank:
-            prompt += f" (rang: {your_rank})"
+            prompt += f" [{your_rank}]"
 
-        prompt += ".\n\nANALYSE DE L'ÉQUIPE ADVERSE :\n=========================\n\n"
+        prompt += "\n" + "="*50 + "\n\n"
+        prompt += "📋 SCOUTING ÉQUIPE ADVERSE :\n\n"
 
-        # Ajouter les infos sur chaque adversaire
+        # Ajouter les infos détaillées sur chaque adversaire
         for i, (summoner_name, data) in enumerate(enemy_analysis.items(), 1):
-            prompt += f"\nJoueur {i} : {summoner_name}\n"
-            prompt += f"- Rang : {data.get('rank', 'Unknown')}\n"
+            prompt += f"{i}. {summoner_name}\n"
+            prompt += f"   Rang: {data.get('rank', 'Unknown')}\n"
 
             if data.get('wins') and data.get('losses'):
-                prompt += f"- Record : {data['wins']}W - {data['losses']}L ({data.get('winrate', 0):.1f}% WR)\n"
+                total = data['wins'] + data['losses']
+                prompt += f"   Form: {data['wins']}W-{data['losses']}L ({data.get('winrate', 0):.1f}% WR sur {total} games)\n"
 
-            prompt += f"- Niveau de menace : {data.get('threat_level', 'UNKNOWN')}\n"
+            threat = data.get('threat_level', 'UNKNOWN')
+            threat_emoji = {'TRÈS ÉLEVÉ': '🔴', 'ÉLEVÉ': '🟠', 'MOYEN': '🟡', 'FAIBLE': '🟢'}.get(threat, '⚪')
+            prompt += f"   Menace: {threat_emoji} {threat}\n"
 
             stats = data.get('stats', {})
             if stats:
-                prompt += f"- KDA moyen : {stats.get('kda_avg', 0):.2f}\n"
-                prompt += f"- Performance récente : {stats.get('wins', 0)}W - {stats.get('losses', 0)}L (dernières parties)\n"
+                prompt += f"   Stats: {stats.get('kda_avg', 0):.2f} KDA"
+                if stats.get('wins', 0) + stats.get('losses', 0) > 0:
+                    recent_wr = (stats['wins'] / (stats['wins'] + stats['losses']) * 100)
+                    prompt += f" | {stats.get('wins', 0)}W-{stats.get('losses', 0)}L récent ({recent_wr:.0f}%)\n"
+
+            # Ajouter les mains champions si disponibles
+            if data.get('main_champions'):
+                mains = data['main_champions'][:3]
+                prompt += f"   Mains: {', '.join(mains)}\n"
+
+            prompt += "\n"
 
         prompt += """
+🎮 TON RÔLE EN TANT QUE COACH :
 
-DEMANDE :
-=========
-Fournis une analyse stratégique en 4 sections :
+Tu dois donner un gameplan tactique PRO pour cette partie spécifique. Pas de conseils génériques.
 
-1. **Évaluation de la menace** : Classe les adversaires du plus dangereux au moins dangereux
-2. **Points faibles à exploiter** : Identifie les faiblesses de l'équipe adverse
-3. **Stratégie de game** : Donne une stratégie globale pour cette partie
-4. **Conseils individuels** : 3-5 conseils spécifiques pour bien jouer cette game
+Structure ton briefing en 5 sections :
 
-Sois tactique, précis et motive le joueur. Utilise des emojis.
+## 1. 🔴 ANALYSE THREAT LEVEL
+Pour CHAQUE adversaire :
+- Son niveau de danger réel (1-5)
+- Pourquoi il est dangereux (ou pas)
+- Comment le contrer spécifiquement
+
+## 2. 🎯 WIN CONDITIONS PRINCIPALES
+Identifie les 2-3 conditions de victoire prioritaires pour cette game :
+- Que faire dans les 15 premières minutes
+- Quel joueur carry/faire snowball
+- Quel objectif prioriser (Drake soul? Baron? Split?)
+
+## 3. ⚠️ LOSE CONDITIONS (pièges à éviter)
+Les 2-3 choses qui peuvent vous faire perdre :
+- Erreurs fatales à ne pas commettre
+- Picks/plays dangereux de l'équipe adverse
+- Timings critiques
+
+## 4. 💡 GAMEPLAN PHASE PAR PHASE
+Stratégie concrète :
+- EARLY (0-15min): Focus principal et rotations
+- MID (15-25min): Objectifs et teamfight approach
+- LATE (25min+): Win condition et macro calls
+
+## 5. 🗣️ CALLS PRIORITAIRES
+3-5 micro-calls tactiques spécifiques à cette game :
+- Invades possibles
+- Gank paths vulnérables
+- Vision key spots
+- Target priority en teamfight
+
+STYLE :
+- Sois ULTRA spécifique à cette game
+- Vocabulaire technique LoL (tracking jungler, dive windows, tempo, etc.)
+- Direct et assertif comme un coach IRL
+- Objectifs chiffrés quand possible (ex: "GG si vous êtes 3 drakes à 20min")
 """
         return prompt
 
@@ -218,12 +291,15 @@ Sois très spécifique et actionnable. Utilise des emojis.
         """Appelle l'API OpenAI GPT"""
         try:
             response = self.client.chat.completions.create(
-                model="gpt-4o-mini",  # gpt-4o-mini est moins cher, vous pouvez utiliser "gpt-4o" ou "gpt-4" pour plus de qualité
+                model="gpt-4o",  # GPT-4o pour une analyse de qualité professionnelle
                 messages=[
-                    {"role": "system", "content": "Tu es un coach professionnel de League of Legends."},
+                    {"role": "system", "content": """Tu es un coach professionnel de League of Legends de haut niveau (Challenger/Master).
+Tu analyses les performances avec un œil expert, tu identifies les patterns de jeu, les erreurs récurrentes et tu donnes des conseils précis et actionnables.
+Tu utilises le vocabulaire technique de LoL (macro, micro, wave management, trading, recall timing, etc.).
+Tu es direct, constructif et tu te concentres sur ce qui fait vraiment la différence pour progresser."""},
                     {"role": "user", "content": prompt}
                 ],
-                max_tokens=2000,
+                max_tokens=3000,  # Plus de tokens pour des analyses détaillées
                 temperature=0.7
             )
             return response.choices[0].message.content

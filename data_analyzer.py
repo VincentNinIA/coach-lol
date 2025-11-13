@@ -24,12 +24,14 @@ class DataAnalyzer:
             'kills': [],
             'deaths': [],
             'assists': [],
+            'kill_participation': [],
             'champions': defaultdict(lambda: {'games': 0, 'wins': 0, 'kills': 0, 'deaths': 0, 'assists': 0}),
             'roles': defaultdict(int),
             'recent_performance': [],
             'kda_avg': 0.0,
             'vision_score_avg': 0.0,
-            'cs_per_min_avg': 0.0
+            'cs_per_min_avg': 0.0,
+            'kill_participation': 0.0
         }
 
         for match in matches:
@@ -48,6 +50,13 @@ class DataAnalyzer:
             stats['kills'].append(player['kills'])
             stats['deaths'].append(player['deaths'])
             stats['assists'].append(player['assists'])
+
+            # Calcul de la kill participation (% des kills de l'équipe)
+            team_id = player['teamId']
+            team_kills = sum(p['kills'] for p in participants if p['teamId'] == team_id)
+            if team_kills > 0:
+                kp = ((player['kills'] + player['assists']) / team_kills) * 100
+                stats['kill_participation'].append(kp)
 
             # Stats par champion
             champ_name = player['championName']
@@ -86,6 +95,12 @@ class DataAnalyzer:
             stats['kda_avg'] = (stats['avg_kills'] + stats['avg_assists']) / max(stats['avg_deaths'], 1)
             stats['vision_score_avg'] /= stats['total_games']
             stats['cs_per_min_avg'] /= stats['total_games']
+
+            # Kill participation moyenne
+            if stats['kill_participation']:
+                stats['kill_participation'] = statistics.mean(stats['kill_participation'])
+            else:
+                stats['kill_participation'] = 0.0
 
         return stats
 

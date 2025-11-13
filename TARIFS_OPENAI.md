@@ -2,32 +2,40 @@
 
 ## Modèles disponibles et prix
 
-### GPT-4o-mini (PAR DÉFAUT - RECOMMANDÉ)
-**Le plus économique et performant pour ce cas d'usage**
-
-- **Input** : $0.150 / 1M tokens (~$0.00015 par 1000 tokens)
-- **Output** : $0.600 / 1M tokens (~$0.0006 par 1000 tokens)
-
-#### Estimation de coût par utilisation :
-- **Analyse d'historique** : ~2000 tokens → **~$0.0015** (~0.15 centimes)
-- **Analyse pré-game** : ~2500 tokens → **~$0.002** (~0.2 centimes)
-- **Analyse de matchup** : ~1500 tokens → **~$0.001** (~0.1 centime)
-
-**💡 Avec $5 de crédit gratuit : environ 2000-3000 analyses !**
-
----
-
-### GPT-4o (PREMIUM)
-**Plus puissant mais plus cher**
+### GPT-4o (PAR DÉFAUT - RECOMMANDÉ) ⭐
+**Analyse de qualité professionnelle**
 
 - **Input** : $2.50 / 1M tokens
 - **Output** : $10.00 / 1M tokens
 
-#### Estimation de coût :
-- **Analyse d'historique** : ~$0.025 (~2.5 centimes)
-- **Analyse pré-game** : ~$0.03 (~3 centimes)
+#### Estimation de coût par utilisation :
+- **Analyse d'historique complète** : ~4000 tokens → **~$0.04** (~4 centimes)
+- **Analyse pré-game détaillée** : ~3500 tokens → **~$0.035** (~3.5 centimes)
+- **Analyse de matchup** : ~2500 tokens → **~$0.025** (~2.5 centimes)
 
-**Avec $5 : environ 150-200 analyses**
+**💡 Avec $5 de crédit gratuit : environ 100-150 analyses professionnelles !**
+
+**Pourquoi GPT-4o ?**
+- 🎯 Analyse de niveau Challenger/Master
+- 🧠 Comprend la méta et le vocabulaire technique LoL
+- 💡 Conseils beaucoup plus précis et actionnables
+- 📊 Meilleure interprétation des stats avancées
+
+---
+
+### GPT-4o-mini (ÉCONOMIQUE)
+**Budget serré**
+
+- **Input** : $0.150 / 1M tokens
+- **Output** : $0.600 / 1M tokens
+
+#### Estimation de coût :
+- **Analyse d'historique** : ~2000 tokens → **~$0.0015** (~0.15 centimes)
+- **Analyse pré-game** : ~2500 tokens → **~$0.002** (~0.2 centimes)
+
+**Avec $5 : environ 2000-3000 analyses**
+
+⚠️ Qualité inférieure pour l'analyse LoL (conseils moins précis)
 
 ---
 
@@ -64,47 +72,49 @@ OpenAI offre **$5 de crédit gratuit** pour les nouveaux comptes.
 Éditez le fichier `llm_coach.py` ligne 221 :
 
 ```python
-model="gpt-4o-mini",  # Par défaut, très économique
+model="gpt-4o",  # Par défaut, qualité PRO ⭐
 ```
 
 ### Options :
-- `"gpt-4o-mini"` → Le moins cher, excellent (défaut) ⭐
-- `"gpt-4o"` → Plus puissant, 15x plus cher
+- `"gpt-4o"` → Analyse professionnelle (défaut recommandé) ⭐
+- `"gpt-4o-mini"` → 10x moins cher mais qualité moindre
 - `"gpt-4-turbo"` → Alternative à GPT-4o
-- `"gpt-3.5-turbo"` → Ancien, pas recommandé
+- `"gpt-3.5-turbo"` → Ancien, pas recommandé pour LoL
 
 ---
 
 ## 📊 Comparaison des coûts
 
-| Action | GPT-4o-mini | GPT-4o | Économie |
-|--------|-------------|---------|----------|
-| Analyse historique | $0.0015 | $0.025 | 16x moins cher |
-| Analyse pré-game | $0.002 | $0.03 | 15x moins cher |
-| 100 analyses | $0.15 | $2.50 | 16x moins cher |
-| Utilisation 1 an | $1.50 | $25 | 16x moins cher |
+| Action | GPT-4o (PRO) | GPT-4o-mini | Différence |
+|--------|--------------|-------------|------------|
+| Analyse historique | $0.04 (4¢) | $0.0015 (0.15¢) | 27x plus cher |
+| Analyse pré-game | $0.035 (3.5¢) | $0.002 (0.2¢) | 17x plus cher |
+| 100 analyses | $4.00 | $0.15 | 27x plus cher |
+| $5 de crédit | ~125 analyses PRO | ~3000 analyses basiques | 24x plus |
 
 ---
 
 ## 🎯 Recommandations
 
-### Pour la plupart des utilisateurs :
-✅ **GPT-4o-mini** (par défaut)
-- Excellent rapport qualité/prix
-- Analyses détaillées et pertinentes
-- $5 = plusieurs années d'utilisation
+### Pour monter en elo sérieusement :
+⭐ **GPT-4o** (par défaut actuel)
+- Analyse digne d'un coach Challenger
+- Vocabulaire technique et conseils précis
+- Identifie les vrais problèmes dans votre gameplay
+- $5 = ~125 analyses professionnelles
+- **Coût : ~4 centimes par analyse** → Le prix d'un conseil pro !
 
-### Si vous voulez la meilleure qualité possible :
-⚡ **GPT-4o**
-- Analyses encore plus détaillées
-- Meilleure compréhension du contexte
-- $5 = plusieurs mois d'utilisation
+### Budget très serré :
+💰 **GPT-4o-mini** (économique)
+- Coût dérisoire (~0.2 centime par analyse)
+- $5 = ~3000 analyses
+- Qualité correcte mais conseils plus génériques
+- À modifier dans `llm_coach.py` ligne 221
 
-### Budget serré ?
-💰 **GPT-4o-mini reste le meilleur choix**
-- Qualité largement suffisante
-- Coût dérisoire
-- Vous pouvez faire 3000 analyses avec $5
+### Notre avis :
+✅ GPT-4o vaut largement son prix si vous voulez VRAIMENT progresser
+✅ 4 centimes pour une analyse pro détaillée, c'est donné
+✅ $5 vous donnent 125 sessions de coaching de qualité
 
 ---
 
