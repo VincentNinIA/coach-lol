@@ -121,13 +121,20 @@ class LiveGameCoach:
                     player_data['stats'] = stats
                     player_data['threat_level'] = self._calculate_threat_level(player_data)
 
-            # Récupérer les maîtrises de champion
-            masteries = self.api.get_champion_masteries(puuid, count=5)
-            if masteries:
-                player_data['main_champions'] = [
-                    {'champion_id': m['championId'], 'level': m['championLevel'], 'points': m['championPoints']}
-                    for m in masteries
-                ]
+            # Récupérer les champions principaux depuis les stats analysées
+            if player_data.get('stats') and player_data['stats'].get('champions'):
+                # Extraire les noms des champions les plus joués
+                champs = player_data['stats']['champions']
+                top_champs = sorted(champs.items(), key=lambda x: x[1]['games'], reverse=True)[:3]
+                player_data['main_champions'] = [champ_name for champ_name, _ in top_champs]
+            else:
+                # Fallback: utiliser les maîtrises (mais sans noms de champions disponibles)
+                masteries = self.api.get_champion_masteries(puuid, count=3)
+                if masteries:
+                    # Stocker juste les niveaux de maîtrise comme info
+                    player_data['main_champions'] = [f"Lvl{m['championLevel']}" for m in masteries]
+                else:
+                    player_data['main_champions'] = []
 
             enemy_analysis[enemy.get('summoner_name')] = player_data
 

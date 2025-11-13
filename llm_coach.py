@@ -182,7 +182,8 @@ Adapte tes conseils au rôle {main_role}. Sois direct, technique, avec chiffres.
 
             prompt += f" - Menace: {threat}"
 
-            if data.get('main_champions'):
+            if data.get('main_champions') and len(data['main_champions']) > 0:
+                # main_champions est maintenant une liste de noms de champions
                 mains = ', '.join(data['main_champions'][:2])
                 prompt += f" - Mains: {mains}"
 
