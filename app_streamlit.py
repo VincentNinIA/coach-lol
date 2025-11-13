@@ -333,7 +333,14 @@ def show_match_history():
                         st.session_state.last_analysis_stats = stats
 
                 # Afficher l'analyse
-                st.markdown(st.session_state.performance_analysis)
+                if st.session_state.get('performance_analysis'):
+                    # Vérifier si c'est une erreur
+                    if st.session_state.performance_analysis.startswith("❌"):
+                        st.error(st.session_state.performance_analysis)
+                    else:
+                        st.markdown(st.session_state.performance_analysis)
+                else:
+                    st.warning("⚠️ L'analyse n'a pas pu être générée")
 
 def show_pregame_analysis():
     """Onglet d'analyse pré-game"""
@@ -412,7 +419,13 @@ def show_pregame_analysis():
                                 st.session_state.last_pregame_analysis = analysis
 
                         # Afficher l'analyse
-                        st.markdown(st.session_state.pregame_llm_analysis)
+                        if st.session_state.get('pregame_llm_analysis'):
+                            if st.session_state.pregame_llm_analysis.startswith("❌"):
+                                st.error(st.session_state.pregame_llm_analysis)
+                            else:
+                                st.markdown(st.session_state.pregame_llm_analysis)
+                        else:
+                            st.warning("⚠️ L'analyse n'a pas pu être générée")
 
 def show_champion_stats():
     """Onglet des statistiques par champion"""
@@ -536,8 +549,11 @@ def show_llm_tips():
                 )
 
         # Afficher l'analyse si elle existe
-        if 'matchup_analysis' in st.session_state:
-            st.markdown(st.session_state.matchup_analysis)
+        if 'matchup_analysis' in st.session_state and st.session_state.matchup_analysis:
+            if st.session_state.matchup_analysis.startswith("❌"):
+                st.error(st.session_state.matchup_analysis)
+            else:
+                st.markdown(st.session_state.matchup_analysis)
 
     elif tip_type == "Conseil rapide":
         context = st.text_area(
