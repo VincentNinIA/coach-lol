@@ -209,15 +209,13 @@ Sois très spécifique et actionnable. Utilise des emojis.
         """Appelle l'API OpenAI GPT"""
         try:
             response = self.client.chat.completions.create(
-                model="gpt-5",  # GPT-5 pour une analyse de qualité professionnelle optimale
+                model="gpt-4o",  # Retour à GPT-4o - GPT-5 a des limites de tokens trop strictes
                 messages=[
-                    {"role": "system", "content": """Tu es un coach professionnel de League of Legends de haut niveau (Challenger/Master).
-Tu analyses les performances avec un œil expert, tu identifies les patterns de jeu, les erreurs récurrentes et tu donnes des conseils précis et actionnables.
-Tu utilises le vocabulaire technique de LoL (macro, micro, wave management, trading, recall timing, etc.).
-Tu es direct, constructif et tu te concentres sur ce qui fait vraiment la différence pour progresser."""},
+                    {"role": "system", "content": "Coach LoL pro (Challenger/Master). Analyse technique, directe, avec vocabulaire LoL (macro, micro, wave management). Sois précis et actionnable."},
                     {"role": "user", "content": prompt}
                 ],
-                max_completion_tokens=3000  # GPT-5 utilise max_completion_tokens (temperature=1 par défaut uniquement)
+                max_tokens=3000,
+                temperature=0.7
             )
 
             # Diagnostiquer pourquoi la réponse est vide
